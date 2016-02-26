@@ -1,4 +1,4 @@
-// httpc package provides an HTTP client interface for creating API clients. It
+// Package httpc provides an HTTP client interface for creating API clients. It
 // comes with a default implementation that covers most cases.
 //
 // Using an interface for your API client allows you to stub requests in tests,
