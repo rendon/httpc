@@ -18,6 +18,7 @@ import (
 type WebAPIClient interface {
 	Get(url string) (*http.Response, error)
 	Post(url string, body []byte) (*http.Response, error)
+	Put(url string, body []byte) (*http.Response, error)
 }
 
 // Client type implements WebAPIClient with a basic behaviour, assuming
@@ -34,6 +35,11 @@ func (t Client) Get(url string) (*http.Response, error) {
 	return http.DefaultClient.Do(req)
 }
 
+// Get package function for DefaultClient.Get
+func Get(url string) (*http.Response, error) {
+	return DefaultClient.Get(url)
+}
+
 // Post performs an HTTP POST request, "application/json" is assumed.
 func (t Client) Post(url string, body []byte) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, bytes.NewReader(body))
@@ -42,6 +48,26 @@ func (t Client) Post(url string, body []byte) (*http.Response, error) {
 		return nil, err
 	}
 	return http.DefaultClient.Do(req)
+}
+
+// Post package function for DefaultClient.Post
+func Post(url string, body []byte) (*http.Response, error) {
+	return DefaultClient.Post(url, body)
+}
+
+// Put performs an HTTP PUT request, "application/json" is assumed.
+func (t Client) Put(url string, body []byte) (*http.Response, error) {
+	req, err := http.NewRequest("PUT", url, bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+	return http.DefaultClient.Do(req)
+}
+
+// Put package function for DefaultClient.Put
+func Put(url string, body []byte) (*http.Response, error) {
+	return DefaultClient.Put(url, body)
 }
 
 // DefaultClient a Client type with a default implementation for WebAPIClient.
