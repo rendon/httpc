@@ -19,6 +19,7 @@ type WebAPIClient interface {
 	Get(url string) (*http.Response, error)
 	Post(url string, body []byte) (*http.Response, error)
 	Put(url string, body []byte) (*http.Response, error)
+	Delete(url string) (*http.Response, error)
 }
 
 // Client type implements WebAPIClient with a basic behaviour, assuming
@@ -68,6 +69,21 @@ func (t Client) Put(url string, body []byte) (*http.Response, error) {
 // Put package function for DefaultClient.Put
 func Put(url string, body []byte) (*http.Response, error) {
 	return DefaultClient.Put(url, body)
+}
+
+// Delete performs an HTTP DELETE request, "application/json" is assumed.
+func (t Client) Delete(url string) (*http.Response, error) {
+	req, err := http.NewRequest("DELETE", url, nil)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+	return http.DefaultClient.Do(req)
+}
+
+// Delete package function for DefaultClient.Delete
+func Delete(url string) (*http.Response, error) {
+	return DefaultClient.Delete(url)
 }
 
 // DefaultClient a Client type with a default implementation for WebAPIClient.
