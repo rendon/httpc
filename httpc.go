@@ -12,6 +12,7 @@ package httpc
 import (
 	"bytes"
 	"net/http"
+	"time"
 )
 
 // WebAPIClient is an interface for Web API clients.
@@ -24,7 +25,9 @@ type WebAPIClient interface {
 
 // Client type implements WebAPIClient with a basic behaviour, assuming
 // "application/json" as Content type.
-type Client struct{}
+type Client struct {
+	httpClient http.Client
+}
 
 // Get performs an HTTP GET request, "application/json" is assumed.
 func (t Client) Get(url string) (*http.Response, error) {
@@ -33,7 +36,7 @@ func (t Client) Get(url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return http.DefaultClient.Do(req)
+	return t.httpClient.Do(req)
 }
 
 // Get package function for DefaultClient.Get
@@ -48,7 +51,7 @@ func (t Client) Post(url string, body []byte) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return http.DefaultClient.Do(req)
+	return t.httpClient.Do(req)
 }
 
 // Post package function for DefaultClient.Post
@@ -63,7 +66,7 @@ func (t Client) Put(url string, body []byte) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return http.DefaultClient.Do(req)
+	return t.httpClient.Do(req)
 }
 
 // Put package function for DefaultClient.Put
@@ -78,12 +81,20 @@ func (t Client) Delete(url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return http.DefaultClient.Do(req)
+	return t.httpClient.Do(req)
 }
 
 // Delete package function for DefaultClient.Delete
 func Delete(url string) (*http.Response, error) {
 	return DefaultClient.Delete(url)
+}
+
+// NewClient returns an initialized client with the given timeout, a timeout of
+// zero means no timeout, see https://golang.org/pkg/net/http/#Client.
+func NewClient(timeout time.Duration) *Client {
+	return &Client{
+		httpClient: http.Client{Timeout: timeout},
+	}
 }
 
 // DefaultClient a Client type with a default implementation for WebAPIClient.
